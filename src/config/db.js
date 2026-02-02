@@ -3,27 +3,25 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 const mysql = require("mysql2");
-
-console.log(process.env)
-
-const db = mysql.createConnection({
+console.log(process.env.NODE_ENV);
+const db = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
 });
 
-db.connect(err => {
-    if (err) {
-        console.error('Database connection failed:', err);
-        return;
-    }
-    console.log('MySQL Connected');
+// Test database connection
+db.getConnection((err, connection) => {
+  if (err) {
+    console.error("Database connection failed:", err.message);
+  } else {
+    console.log("MySQL connected successfully");
+    connection.release();
+  }
 });
-
-
 
 module.exports = db;
