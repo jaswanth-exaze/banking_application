@@ -18,12 +18,13 @@ const pool = mysql.createPool({
 
 pool.getConnection((err, connection) => {
   if (err) {
-    console.error("Database connection failed:", err.message);
+    console.error("Database connection failed FULL ERROR:", err);
   } else {
     console.log("MySQL connected successfully");
     connection.release();
   }
 });
+
 
 
 module.exports = pool;
