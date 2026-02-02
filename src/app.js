@@ -12,11 +12,18 @@ const managerRoutes= require("./routes/manager.routes")
 // Global middlewares
 // CORS configuration - allow frontend domain in production
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || '*', // Allow all origins in development, specific URL in production
+  origin: [
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
+    "https://bankingapplicationfrontend.vercel.app"
+  ],
   credentials: true,
-  optionsSuccessStatus: 200
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 };
+
 app.use(cors(corsOptions));
+
 app.use(express.json());
 
 
