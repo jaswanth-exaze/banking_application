@@ -1,6 +1,10 @@
 require("./env");
 const mysql = require("mysql2");
 
+console.log("DB HOST:", process.env.DB_HOST);
+console.log("DB USER:", process.env.DB_USER);
+console.log("DB NAME:", process.env.DB_NAME);
+
 const db = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
