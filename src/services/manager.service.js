@@ -27,15 +27,11 @@ exports.getDashboardSummary = (branchId) => {
          WHERE u.branch_id = ? AND a.status = 'ACTIVE') AS branch_balance
     `;
 
-    db.query(
-      sql,
-      [branchId, branchId, branchId, branchId],
-      (err, rows) => {
-        if (err) return reject(err);
+    db.query(sql, [branchId, branchId, branchId, branchId], (err, rows) => {
+      if (err) return reject(err);
 
-        resolve(rows[0]);
-      }
-    );
+      resolve(rows[0]);
+    });
   });
 };
 
@@ -44,12 +40,16 @@ exports.getEmployeesByBranch = (branchId) => {
   return new Promise((resolve, reject) => {
     const sql = `
       SELECT
+        e.employee_id,
         u.user_id,
-        u.username,
-        u.is_active,
-        r.role_name
+        e.first_name,
+        e.last_name,
+        e.email,
+        e.phone,
+        e.designation as role_name
       FROM users u
       JOIN roles r ON u.role_id = r.role_id
+      JOIN employees e ON u.user_id = e.user_id
       WHERE u.branch_id = ? AND r.role_name = 'EMPLOYEE'
     `;
 
