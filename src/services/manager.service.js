@@ -5,6 +5,10 @@ exports.getDashboardSummary = (branchId) => {
   return new Promise((resolve, reject) => {
     const sql = `
       SELECT
+        b.branch_id,
+        b.branch_name,
+        b.branch_code,
+        CONCAT(b.city, ', ', b.state) AS branch_address,
         (SELECT COUNT(*) 
          FROM users 
          WHERE branch_id = ? AND role_id = 2) AS total_employees,
@@ -25,13 +29,19 @@ exports.getDashboardSummary = (branchId) => {
          JOIN customers c ON a.customer_id = c.customer_id
          JOIN users u ON c.user_id = u.user_id
          WHERE u.branch_id = ? AND a.status = 'ACTIVE') AS branch_balance
+      FROM branches b
+      WHERE b.branch_id = ?
     `;
 
-    db.query(sql, [branchId, branchId, branchId, branchId], (err, rows) => {
+    db.query(
+      sql,
+      [branchId, branchId, branchId, branchId, branchId],
+      (err, rows) => {
       if (err) return reject(err);
 
       resolve(rows[0]);
-    });
+      },
+    );
   });
 };
 
