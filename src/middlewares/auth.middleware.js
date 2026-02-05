@@ -15,7 +15,15 @@ exports.verifyToken = (req, res, next) => {
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
-      return res.status(401).json({ message: "Invalid or expired token" });
+      if (err.name === "TokenExpiredError") {
+        return res.status(401).json({
+          message: "Session expired. Please log in again."
+        });
+      }
+
+      return res.status(401).json({
+        message: "Invalid token. Please log in again."
+      });
     }
 
     // Attach user info to request

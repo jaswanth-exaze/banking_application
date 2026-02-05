@@ -26,5 +26,11 @@ router.get(
   checkRole("CUSTOMER"),
   customerController.getProfile,
 );
+router.post(
+  "/transfer",
+  verifyToken,
+  checkRole("CUSTOMER"),
+  customerController.transferMoney,
+);
 
 module.exports = router;
