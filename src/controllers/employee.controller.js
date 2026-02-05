@@ -93,3 +93,32 @@ exports.getProfile = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+
+exports.depositeMoney = async (req, res) => {
+  try {
+    const { toId, amount, desc } = req.body;
+
+    await employeeService.deposite(toId, amount, desc);
+
+    res.status(201).json({
+      message: "Amount deposited successfully",
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.withdrawlMoney = async (req, res) => {
+  try {
+    const { fromId, amount, desc } = req.body;
+
+    await employeeService.withdrawl(fromId, amount, desc);
+
+    res.status(201).json({
+      message: "Amount withdrawl successfully",
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

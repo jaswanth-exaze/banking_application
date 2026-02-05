@@ -250,3 +250,32 @@ WHERE u.user_id = ?;
     });
   });
 };
+
+
+exports.deposite = (toID, amount, desc='Deposited by bank') => {
+  return new Promise((resolve, reject) => {
+    const sql = `CALL add_money(?, ?, ?)`;
+
+    db.query(sql, [toID, amount, desc], (err, rows) => {
+      if (err) {
+        return reject(err);
+      }
+
+      resolve({ message: "Successfully transferred" });
+    });
+  });
+};
+
+exports.withdrawl = (fromID, amount, desc='withdraw by bank') => {
+  return new Promise((resolve, reject) => {
+    const sql = `CALL remove_money(?, ?, ?)`;
+
+    db.query(sql, [fromID, amount, desc], (err, rows) => {
+      if (err) {
+        return reject(err);
+      }
+
+      resolve({ message: "Successfully transferred" });
+    });
+  });
+};

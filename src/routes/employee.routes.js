@@ -39,4 +39,19 @@ router.get(
   checkRole("EMPLOYEE"),
   employeeController.getProfile,
 );
+
+router.post(
+  "/withdrawl",
+  verifyToken,
+  checkRole("EMPLOYEE"),
+  employeeController.withdrawlMoney,
+);
+router.post(
+  "/deposite",
+  verifyToken,
+  checkRole("EMPLOYEE"),
+  employeeController.depositeMoney,
+);
+
+
 module.exports = router;
