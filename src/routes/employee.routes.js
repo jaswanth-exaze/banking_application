@@ -39,7 +39,12 @@ router.get(
   checkRole("EMPLOYEE"),
   employeeController.getProfile,
 );
-
+router.get(
+  "/transactions",
+  verifyToken,
+  checkRole("EMPLOYEE"),
+  employeeController.getTransactions,
+);
 router.post(
   "/withdrawl",
   verifyToken,

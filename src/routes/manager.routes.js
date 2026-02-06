@@ -28,5 +28,12 @@ checkRole("MANAGER"),
 managerController.getCustomersByBranch
 );
 
+router.get(
+  "/transactions",
+  verifyToken,
+  checkRole("MANAGER"),
+  managerController.getTransactions,
+);
+
 
 module.exports = router;

@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const employeeService = require("./employee.service");
 
 /* DASHBOARD SUMMARY */
 exports.getDashboardSummary = (branchId) => {
@@ -91,3 +92,7 @@ exports.getCustomersByBranch = (branchId) => {
     });
   });
 };
+
+/* Branch transactions (reuse employee service logic) */
+exports.getBranchTransactions = (params) =>
+  employeeService.getBranchTransactions(params);

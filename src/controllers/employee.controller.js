@@ -94,6 +94,38 @@ exports.getProfile = async (req, res) => {
   }
 };
 
+exports.getTransactions = async (req, res) => {
+  try {
+    const branchId = req.user.branch_id;
+    const {
+      page = 1,
+      limit = 15,
+      customerId,
+      userId,
+    } = req.query;
+
+    const pageNum = Math.max(1, parseInt(page, 10) || 1);
+    const perPage = Math.max(1, Math.min(parseInt(limit, 10) || 15, 100));
+    const offset = (pageNum - 1) * perPage;
+
+    const { data, total } = await employeeService.getBranchTransactions({
+      branchId,
+      customerId: customerId ? Number(customerId) : undefined,
+      userId: userId ? Number(userId) : undefined,
+      limit: perPage,
+      offset,
+    });
+
+    res.json({
+      data,
+      page: pageNum,
+      limit: perPage,
+      total,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
 exports.depositeMoney = async (req, res) => {
   try {

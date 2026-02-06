@@ -251,6 +251,97 @@ WHERE u.user_id = ?;
   });
 };
 
+/* Branch-wide transactions (with optional filters) */
+exports.getBranchTransactions = async ({
+  branchId,
+  customerId,
+  userId,
+  limit = 15,
+  offset = 0,
+}) => {
+  const whereParts = [
+    `(
+      EXISTS (
+        SELECT 1
+        FROM accounts a1
+        JOIN customers c1 ON a1.customer_id = c1.customer_id
+        JOIN users u1 ON c1.user_id = u1.user_id
+        WHERE a1.account_id = t.from_account_id AND u1.branch_id = ?
+      )
+      OR
+      EXISTS (
+        SELECT 1
+        FROM accounts a2
+        JOIN customers c2 ON a2.customer_id = c2.customer_id
+        JOIN users u2 ON c2.user_id = u2.user_id
+        WHERE a2.account_id = t.to_account_id AND u2.branch_id = ?
+      )
+    )`,
+  ];
+  const params = [branchId, branchId];
+
+  if (customerId) {
+    whereParts.push("(cf.customer_id = ? OR ct.customer_id = ?)");
+    params.push(customerId, customerId);
+  }
+
+  if (userId) {
+    whereParts.push("(ufrom.user_id = ? OR uto.user_id = ?)");
+    params.push(userId, userId);
+  }
+
+  const whereClause = `WHERE ${whereParts.join(" AND ")}`;
+
+  const baseSql = `
+    SELECT
+      t.transaction_id,
+      t.transaction_type,
+      t.amount,
+      t.description,
+      t.created_at,
+      t.from_account_id,
+      t.to_account_id,
+      af.account_number AS from_account_number,
+      at.account_number AS to_account_number,
+      COALESCE(
+        NULLIF(TRIM(CONCAT(cf.first_name, ' ', cf.last_name)), ''),
+        CONCAT('Customer ', cf.customer_id),
+        CONCAT('Account ', af.account_number),
+        'Cash Desk'
+      ) AS from_customer_name,
+      COALESCE(
+        NULLIF(TRIM(CONCAT(ct.first_name, ' ', ct.last_name)), ''),
+        CONCAT('Customer ', ct.customer_id),
+        CONCAT('Account ', at.account_number),
+        'Cash Desk'
+      ) AS to_customer_name,
+      cf.customer_id AS from_customer_id,
+      ct.customer_id AS to_customer_id,
+      ufrom.user_id AS from_user_id,
+      uto.user_id AS to_user_id
+    FROM transactions t
+    LEFT JOIN accounts af ON t.from_account_id = af.account_id
+    LEFT JOIN customers cf ON af.customer_id = cf.customer_id
+    LEFT JOIN users ufrom ON cf.user_id = ufrom.user_id
+    LEFT JOIN accounts at ON t.to_account_id = at.account_id
+    LEFT JOIN customers ct ON at.customer_id = ct.customer_id
+    LEFT JOIN users uto ON ct.user_id = uto.user_id
+    ${whereClause}
+  `;
+
+  const countSql = `SELECT COUNT(*) AS total FROM (${baseSql}) AS tx`;
+  const dataSql = `${baseSql} ORDER BY t.created_at DESC LIMIT ? OFFSET ?`;
+
+  const dbp = db.promise();
+  const [[countRow]] = await dbp.query(countSql, params);
+  const [rows] = await dbp.query(dataSql, [...params, Number(limit), Number(offset)]);
+
+  return {
+    total: countRow?.total ?? 0,
+    data: rows,
+  };
+};
+
 
 exports.deposite = (toID, amount, desc='Deposited by bank') => {
   return new Promise((resolve, reject) => {
