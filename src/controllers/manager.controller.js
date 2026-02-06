@@ -96,3 +96,16 @@ exports.decideLoan = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
+exports.getAllLoans = async (req, res) => {
+  try {
+    const { status } = req.query;
+    const loans = await loanService.getLoansByBranch({
+      branchId: req.user.branch_id,
+      status,
+    });
+    res.json(loans);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

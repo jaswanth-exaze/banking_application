@@ -202,6 +202,32 @@ exports.getLoansByStatus = async ({ status, branchId }) => {
 };
 
 /* ================================
+   All loans for a branch (optional status filter)
+================================ */
+exports.getLoansByBranch = async ({ branchId, status }) => {
+  const params = [branchId];
+  let statusClause = "";
+  if (status) {
+    statusClause = "AND lr.status = ?";
+    params.push(status);
+  }
+
+  const sql = `
+    SELECT
+      lr.*,
+      c.first_name,
+      c.last_name
+    FROM loan_requests lr
+    JOIN customers c ON lr.customer_id = c.customer_id
+    WHERE lr.branch_id = ?
+      ${statusClause}
+    ORDER BY lr.created_at DESC
+  `;
+
+  const [rows] = await db.promise().query(sql, params);
+  return rows;
+};
+/* ================================
    CUSTOMER → My Loans
 ================================ */
 exports.getCustomerLoans = async (userId) => {

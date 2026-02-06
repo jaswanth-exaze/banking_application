@@ -13,19 +13,18 @@ router.get(
 );
 
 router.get(
-"/employees",
-verifyToken,
-checkRole("MANAGER"),
-managerController.getEmployeesByBranch
+  "/employees",
+  verifyToken,
+  checkRole("MANAGER"),
+  managerController.getEmployeesByBranch,
 );
-
 
 /* Customers of branch */
 router.get(
-"/customers",
-verifyToken,
-checkRole("MANAGER"),
-managerController.getCustomersByBranch
+  "/customers",
+  verifyToken,
+  checkRole("MANAGER"),
+  managerController.getCustomersByBranch,
 );
 
 router.get(
@@ -35,6 +34,22 @@ router.get(
   managerController.getTransactions,
 );
 
-router.get("/pendingLoans", verifyToken, checkRole("MANAGER"), managerController.getPendingLoans);
-router.post("/:loanId/decision", verifyToken, checkRole("MANAGER"),managerController.decideLoan);
+router.get(
+  "/pendingLoans",
+  verifyToken,
+  checkRole("MANAGER"),
+  managerController.getPendingLoans,
+);
+router.post(
+  "/:loanId/decision",
+  verifyToken,
+  checkRole("MANAGER"),
+  managerController.decideLoan,
+);
+router.get(
+  "/loans",
+  verifyToken,
+  checkRole("MANAGER"),
+  managerController.getAllLoans,
+);
 module.exports = router;
