@@ -89,7 +89,7 @@ exports.managerDecision = async ({
 }) => {
   const conn = db.promise();
   try {
-    await conn.beginTransaction();
+    await conn.query("START TRANSACTION");
 
     /* Lock and read loan for payout info */
     const [loanRows] = await conn.query(
@@ -174,9 +174,13 @@ exports.managerDecision = async ({
       );
     }
 
-    await conn.commit();
+    await conn.query("COMMIT");
   } catch (err) {
-    await conn.rollback();
+    try {
+      await conn.query("ROLLBACK");
+    } catch (rollbackErr) {
+      // swallow rollback errors to avoid masking the original issue
+    }
     throw err;
   }
 };
