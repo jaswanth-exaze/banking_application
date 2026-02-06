@@ -1,4 +1,5 @@
 const employeeService = require("../services/employee.service");
+const loanService = require("../services/loan.service")
 
 exports.getCustomers = async (req, res) => {
   try {
@@ -152,5 +153,34 @@ exports.withdrawlMoney = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+
+exports.getPendingLoans = async (req, res) => {
+  const loans = await loanService.getLoansByStatus({
+    status: "REQUESTED",
+    branchId: req.user.branch_id,
+  });
+  res.json(loans);
+};
+
+exports.decideLoan = async (req, res) => {
+  try {
+    const status =
+      req.body.action === "APPROVE"
+        ? "EMPLOYEE_APPROVED"
+        : "EMPLOYEE_REJECTED";
+
+    await loanService.employeeDecision({
+      loanId: req.params.loanId,
+      userId: req.user.user_id,
+      status,
+      comment: req.body.comment,
+    });
+
+    res.json({ message: `Loan ${req.body.action.toLowerCase()}d` });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 };

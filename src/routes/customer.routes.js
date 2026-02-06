@@ -33,4 +33,8 @@ router.post(
   customerController.transferMoney,
 );
 
+router.post("/applyLoan", verifyToken, checkRole("CUSTOMER"), customerController.applyLoan);
+router.get("/getLoans", verifyToken, checkRole("CUSTOMER"), customerController.getMyLoans);
+
+
 module.exports = router;

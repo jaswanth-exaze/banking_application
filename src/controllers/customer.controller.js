@@ -1,4 +1,5 @@
 const customerService = require("../services/customer.service");
+const loanService = require("../services/loan.service");
 
 exports.getAccounts = async (req, res) => {
   try {
@@ -43,3 +44,39 @@ exports.transferMoney = async (req, res) => {
   }
 };
 
+exports.applyLoan = async (req, res) => {
+  try {
+    const { amount, tenure_months, purpose } = req.body;
+
+    if (!amount || !tenure_months) {
+      return res.status(400).json({
+        message: "amount and tenure_months are required",
+      });
+    }
+
+    const loanId = await loanService.applyLoan({
+      userId: req.user.user_id,
+      branchId: req.user.branch_id,
+      amount,
+      tenureMonths: tenure_months,
+      purpose,
+    });
+
+    res.status(201).json({
+      message: "Loan request submitted",
+      loan_id: loanId,
+    });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+exports.getMyLoans = async (req, res) => {
+  const loans = await loanService.getCustomerLoans(req.user.user_id);
+  res.json(loans);
+};
+
+exports.getLoanHistory = async (req, res) => {
+  const history = await loanService.getLoanHistory(req.params.loanId);
+  res.json(history);
+};
