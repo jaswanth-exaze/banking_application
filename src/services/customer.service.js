@@ -1,6 +1,11 @@
+/**
+ * Customer data service.
+ * Encapsulates SQL queries and procedures for customer-facing operations.
+ */
+
 const db = require("../config/db");
 
-// Fetch customer accounts
+// Fetches all accounts linked to the authenticated customer user id.
 exports.getAccounts = (userId) => {
   return new Promise((resolve, reject) => {
     const sql = `
@@ -18,7 +23,7 @@ exports.getAccounts = (userId) => {
   });
 };
 
-// Fetch customer transactions
+// Fetches customer transactions with related counterparty/account metadata.
 exports.getTransactions = (userId) => {
   return new Promise((resolve, reject) => {
     const sql = `
@@ -64,6 +69,7 @@ exports.getTransactions = (userId) => {
   });
 };
 
+// Fetches profile and branch data for the authenticated customer.
 exports.getProfile = (userId) => {
   return new Promise((resolve, reject) => {
     const sql = `
@@ -92,6 +98,7 @@ WHERE u.user_id = ?;
   });
 };
 
+// Executes transfer via stored procedure.
 exports.transfer_money = (myId, toID, amount, desc) => {
   return new Promise((resolve, reject) => {
     const sql = `CALL transfer_money(?, ?, ?, ?)`;

@@ -1,7 +1,13 @@
+/**
+ * Manager data service.
+ * Provides branch-level aggregates and delegates shared transaction queries.
+ */
+
 const db = require("../config/db");
 const employeeService = require("./employee.service");
 
 /* DASHBOARD SUMMARY */
+// Returns branch identity and key aggregate counts/balances.
 exports.getDashboardSummary = (branchId) => {
   return new Promise((resolve, reject) => {
     const sql = `
@@ -47,6 +53,7 @@ exports.getDashboardSummary = (branchId) => {
 };
 
 /* EMPLOYEES OF BRANCH */
+// Lists employee records for the manager's branch.
 exports.getEmployeesByBranch = (branchId) => {
   return new Promise((resolve, reject) => {
     const sql = `
@@ -72,6 +79,7 @@ exports.getEmployeesByBranch = (branchId) => {
 };
 
 /* CUSTOMERS OF BRANCH */
+// Lists customer records for the manager's branch.
 exports.getCustomersByBranch = (branchId) => {
   return new Promise((resolve, reject) => {
     const sql = `
@@ -94,5 +102,6 @@ exports.getCustomersByBranch = (branchId) => {
 };
 
 /* Branch transactions (reuse employee service logic) */
+// Reuses employee transaction query logic for manager scope.
 exports.getBranchTransactions = (params) =>
   employeeService.getBranchTransactions(params);

@@ -1,6 +1,12 @@
+/**
+ * Employee controller.
+ * Handles branch operations exposed to employee dashboards.
+ */
+
 const employeeService = require("../services/employee.service");
 const loanService = require("../services/loan.service")
 
+// Lists active customers in the employee's branch.
 exports.getCustomers = async (req, res) => {
   try {
     const customers = await employeeService.getCustomersByBranch(
@@ -11,6 +17,7 @@ exports.getCustomers = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+// Returns branch summary metrics (customers and balance).
 exports.getDashboardSummary = async (req, res) => {
   try {
     const branchId = req.user.branch_id;
@@ -21,6 +28,7 @@ exports.getDashboardSummary = async (req, res) => {
   }
 };
 
+// Creates a customer account after branch and input validation.
 exports.createAccount = async (req, res) => {
   try {
     const { customer_id, account_type, opening_balance } = req.body;
@@ -44,6 +52,7 @@ exports.createAccount = async (req, res) => {
   }
 };
 
+// Creates user/customer records and optional account in one flow.
 exports.onboardCustomer = async (req, res) => {
   try {
     const {
@@ -86,6 +95,7 @@ exports.onboardCustomer = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+// Returns employee profile details.
 exports.getProfile = async (req, res) => {
   try {
     const profile = await employeeService.getProfile(req.user.user_id);
@@ -95,6 +105,7 @@ exports.getProfile = async (req, res) => {
   }
 };
 
+// Returns paginated branch transactions with optional filters.
 exports.getTransactions = async (req, res) => {
   try {
     const branchId = req.user.branch_id;
@@ -128,6 +139,7 @@ exports.getTransactions = async (req, res) => {
   }
 };
 
+// Deposits amount into an account through DB stored procedure.
 exports.depositeMoney = async (req, res) => {
   try {
     const { toId, amount, desc } = req.body;
@@ -142,6 +154,7 @@ exports.depositeMoney = async (req, res) => {
   }
 };
 
+// Withdraws amount from an account through DB stored procedure.
 exports.withdrawlMoney = async (req, res) => {
   try {
     const { fromId, amount, desc } = req.body;
@@ -157,6 +170,7 @@ exports.withdrawlMoney = async (req, res) => {
 };
 
 
+// Lists loans waiting for employee review.
 exports.getPendingLoans = async (req, res) => {
   const loans = await loanService.getLoansByStatus({
     status: "REQUESTED",
@@ -165,6 +179,7 @@ exports.getPendingLoans = async (req, res) => {
   res.json(loans);
 };
 
+// Saves employee approve/reject decision for a loan.
 exports.decideLoan = async (req, res) => {
   try {
     const status =

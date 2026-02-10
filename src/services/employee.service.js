@@ -1,6 +1,12 @@
+/**
+ * Employee data service.
+ * Contains branch-scoped customer/account operations, onboarding, transactions, and cash desk flows.
+ */
+
 const db = require("../config/db");
 const bcrypt = require("bcrypt");
 
+// Returns active customers belonging to the provided branch.
 exports.getCustomersByBranch = (branchId) => {
   return new Promise((resolve, reject) => {
     const sql = `
@@ -15,7 +21,7 @@ exports.getCustomersByBranch = (branchId) => {
     });
   });
 };
-// helper fuction to generate account number
+// Generates the next sequential account number in ACC########## format.
 function generateAccountNumber(db) {
   return new Promise((resolve, reject) => {
     const sql = `
@@ -41,7 +47,7 @@ function generateAccountNumber(db) {
   });
 }
 
-//add customers by employees
+// Creates a new bank account for an existing branch customer.
 exports.createAccount = ({
   customer_id,
   account_type,
@@ -103,6 +109,7 @@ exports.createAccount = ({
   });
 };
 
+// Onboards a customer (user + profile + optional initial account) in one transaction.
 exports.onboardCustomer = ({
   username,
   password,
@@ -195,6 +202,7 @@ exports.onboardCustomer = ({
   });
 };
 
+// Returns basic branch-level dashboard totals for employee view.
 exports.getDashboardSummary = (branchId) => {
   return new Promise((resolve, reject) => {
     const sql = `
@@ -218,6 +226,7 @@ exports.getDashboardSummary = (branchId) => {
   });
 };
 
+// Returns employee profile details for the authenticated user.
 exports.getProfile = (userId) => {
   return new Promise((resolve, reject) => {
     const sql = `SELECT
@@ -252,6 +261,7 @@ WHERE u.user_id = ?;
 };
 
 /* Branch-wide transactions (with optional filters) */
+// Returns paginated transaction data restricted to the employee's branch scope.
 exports.getBranchTransactions = async ({
   branchId,
   customerId,
@@ -342,7 +352,7 @@ exports.getBranchTransactions = async ({
   };
 };
 
-
+// Executes a cash deposit into a target account.
 exports.deposite = (toID, amount, desc='Deposited by bank') => {
   return new Promise((resolve, reject) => {
     const sql = `CALL add_money(?, ?, ?)`;
@@ -357,6 +367,7 @@ exports.deposite = (toID, amount, desc='Deposited by bank') => {
   });
 };
 
+// Executes a cash withdrawal from a source account.
 exports.withdrawl = (fromID, amount, desc='withdraw by bank') => {
   return new Promise((resolve, reject) => {
     const sql = `CALL remove_money(?, ?, ?)`;

@@ -1,7 +1,13 @@
+/**
+ * Auth service.
+ * Validates credentials against DB and returns JWT/session payload.
+ */
+
 const db = require("../config/db");
 const { comparePassword } = require("../utils/password.util");
 const { generateToken } = require("../utils/jwt.util");
 
+// Authenticates user credentials and builds login response data.
 exports.login = ({ username, password }) => {
   return new Promise((resolve, reject) => {
 

@@ -1,3 +1,8 @@
+/**
+ * Loan workflow service.
+ * Handles loan creation, employee/manager decisions, and loan listing/history queries.
+ */
+
 const db = require("../config/db");
 
 /* ================================
@@ -11,6 +16,7 @@ exports.applyLoan = async ({
   tenureMonths,
   purpose,
 }) => {
+  // Insert loan request by resolving customer_id from authenticated user id.
   const sql = `
     INSERT INTO loan_requests (
       customer_id,
@@ -54,6 +60,7 @@ exports.employeeDecision = async ({
   status,
   comment,
 }) => {
+  // Persist employee decision and attach acting employee_id.
   const sql = `
     UPDATE loan_requests
     SET
@@ -89,6 +96,7 @@ exports.managerDecision = async ({
 }) => {
   const conn = db.promise();
   try {
+    // Use transaction to keep loan status update + optional credit atomic.
     await conn.query("START TRANSACTION");
 
     /* Lock and read loan for payout info */

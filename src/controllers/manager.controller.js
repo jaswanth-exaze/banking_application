@@ -1,7 +1,13 @@
+/**
+ * Manager controller.
+ * Handles manager-level branch oversight and loan decision actions.
+ */
+
 const managerService = require("../services/manager.service");
 const loanService = require("../services/loan.service")
 
 /* Dashboard Summary */
+// Returns branch dashboard totals and branch identity details.
 exports.getDashboardSummary = async (req, res) => {
   try {
     const branchId = req.user.branch_id;
@@ -12,6 +18,7 @@ exports.getDashboardSummary = async (req, res) => {
   }
 };
 /* Employees by branch */
+// Lists employees assigned to manager's branch.
 exports.getEmployeesByBranch = async (req, res) => {
 try {
 const branchId = req.user.branch_id;
@@ -22,8 +29,8 @@ res.status(500).json({ message: err.message });
 }
 };
 
-
 /* Customers by branch */
+// Lists customers assigned to manager's branch.
 exports.getCustomersByBranch = async (req, res) => {
 try {
 const branchId = req.user.branch_id;
@@ -35,6 +42,7 @@ res.status(500).json({ message: err.message });
 };
 
 /* Branch transactions */
+// Returns paginated branch transactions with optional filters.
 exports.getTransactions = async (req, res) => {
   try {
     const branchId = req.user.branch_id;
@@ -68,7 +76,7 @@ exports.getTransactions = async (req, res) => {
   }
 };
 
-
+// Returns loans waiting for manager decision.
 exports.getPendingLoans = async (req, res) => {
   const loans = await loanService.getLoansByStatus({
     status: "EMPLOYEE_APPROVED",
@@ -77,6 +85,7 @@ exports.getPendingLoans = async (req, res) => {
   res.json(loans);
 };
 
+// Saves manager approve/reject decision and applies disbursal on approval.
 exports.decideLoan = async (req, res) => {
   try {
     const status =
@@ -97,6 +106,7 @@ exports.decideLoan = async (req, res) => {
   }
 };
 
+// Returns all branch loans with optional status filtering.
 exports.getAllLoans = async (req, res) => {
   try {
     const { status } = req.query;

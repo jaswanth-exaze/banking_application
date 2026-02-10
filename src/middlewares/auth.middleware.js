@@ -1,5 +1,11 @@
+/**
+ * Authentication middleware.
+ * Verifies JWT tokens and attaches decoded user identity to `req.user`.
+ */
+
 const jwt = require("jsonwebtoken");
 
+// Validates bearer token and blocks unauthorized requests.
 exports.verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -13,6 +19,7 @@ exports.verifyToken = (req, res, next) => {
     return res.status(401).json({ message: "Token missing" });
   }
 
+  // Verify token signature and expiry.
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       if (err.name === "TokenExpiredError") {
@@ -26,7 +33,7 @@ exports.verifyToken = (req, res, next) => {
       });
     }
 
-    // Attach user info to request
+    // Attach decoded claims for downstream role and branch checks.
     req.user = decoded; // { user_id, role, branch_id }
     
     next();

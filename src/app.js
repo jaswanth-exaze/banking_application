@@ -1,3 +1,8 @@
+/**
+ * Express app composition.
+ * Registers global middleware and mounts all feature route groups.
+ */
+
 const express = require("express");
 const cors = require("cors");
 require("./config/db");
@@ -9,8 +14,7 @@ const customerRoutes = require("./routes/customer.routes");
 const employeeRoutes = require("./routes/employee.routes")
 const managerRoutes= require("./routes/manager.routes")
 
-// Global middlewares
-// CORS configuration - allow frontend domain in production
+// CORS policy for local development and deployed frontend.
 const corsOptions = {
   origin: [
     "http://localhost:5500",
@@ -24,15 +28,17 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// Parses incoming JSON request bodies.
 app.use(express.json());
 
 
 
-// Health check route
+// Health endpoint used by uptime checks and deployment validation.
 app.get("/", (req, res) => {
   res.send("Banking backend API is running");
 });
 
+// Route mounting by domain module.
 app.use("/auth", authRoutes);
 app.use("/protected", protectedRoutes);
 app.use("/customer", customerRoutes);

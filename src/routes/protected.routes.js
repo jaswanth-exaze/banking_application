@@ -1,10 +1,15 @@
+/**
+ * Sample protected routes.
+ * Demonstrates token verification and role-based authorization.
+ */
+
 const express = require("express");
 const router = express.Router();
 
 const { verifyToken } = require("../middlewares/auth.middleware");
 const { checkRole } = require("../middlewares/role.middleware");
 
-// Any logged-in user
+// Accessible to any authenticated user.
 router.get(
   "/profile",
   verifyToken,
@@ -16,7 +21,7 @@ router.get(
   }
 );
 
-// Manager-only
+// Accessible only to managers.
 router.get(
   "/manager-only",
   verifyToken,

@@ -1,3 +1,8 @@
+/**
+ * Manager API routes.
+ * Provides branch-level oversight endpoints and final loan decision actions.
+ */
+
 const express = require("express");
 const router = express.Router();
 
@@ -5,6 +10,7 @@ const { verifyToken } = require("../middlewares/auth.middleware");
 const { checkRole } = require("../middlewares/role.middleware");
 const managerController = require("../controllers/manager.controller");
 
+// Dashboard totals and branch info.
 router.get(
   "/dashboard-summary",
   verifyToken,
@@ -12,6 +18,7 @@ router.get(
   managerController.getDashboardSummary,
 );
 
+// Employees under manager's branch.
 router.get(
   "/employees",
   verifyToken,
@@ -19,7 +26,7 @@ router.get(
   managerController.getEmployeesByBranch,
 );
 
-/* Customers of branch */
+/* Customers of manager's branch */
 router.get(
   "/customers",
   verifyToken,
@@ -27,6 +34,7 @@ router.get(
   managerController.getCustomersByBranch,
 );
 
+// Branch transactions with pagination and filters.
 router.get(
   "/transactions",
   verifyToken,
@@ -34,6 +42,7 @@ router.get(
   managerController.getTransactions,
 );
 
+// Manager loan queue and decisions.
 router.get(
   "/pendingLoans",
   verifyToken,
@@ -46,6 +55,7 @@ router.post(
   checkRole("MANAGER"),
   managerController.decideLoan,
 );
+// Returns all branch loans (optional status filter).
 router.get(
   "/loans",
   verifyToken,
