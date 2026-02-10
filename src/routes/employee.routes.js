@@ -57,17 +57,17 @@ router.get(
 
 // Cash desk withdrawal operation.
 router.post(
-  "/withdrawl",
+  "/withdrawal",
   verifyToken,
   checkRole("EMPLOYEE"),
-  employeeController.withdrawlMoney,
+  employeeController.withdrawalMoney,
 );
 // Cash desk deposit operation.
 router.post(
-  "/deposite",
+  "/deposit",
   verifyToken,
   checkRole("EMPLOYEE"),
-  employeeController.depositeMoney,
+  employeeController.depositMoney,
 );
 
 // Loan queue endpoints for employee review stage.

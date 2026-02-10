@@ -353,7 +353,7 @@ exports.getBranchTransactions = async ({
 };
 
 // Executes a cash deposit into a target account.
-exports.deposite = (toID, amount, desc='Deposited by bank') => {
+exports.deposit = (toID, amount, desc='Deposited by bank') => {
   return new Promise((resolve, reject) => {
     const sql = `CALL add_money(?, ?, ?)`;
 
@@ -368,7 +368,7 @@ exports.deposite = (toID, amount, desc='Deposited by bank') => {
 };
 
 // Executes a cash withdrawal from a source account.
-exports.withdrawl = (fromID, amount, desc='withdraw by bank') => {
+exports.withdrawal = (fromID, amount, desc='withdraw by bank') => {
   return new Promise((resolve, reject) => {
     const sql = `CALL remove_money(?, ?, ?)`;
 

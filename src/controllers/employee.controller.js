@@ -140,11 +140,11 @@ exports.getTransactions = async (req, res) => {
 };
 
 // Deposits amount into an account through DB stored procedure.
-exports.depositeMoney = async (req, res) => {
+exports.depositMoney = async (req, res) => {
   try {
     const { toId, amount, desc } = req.body;
 
-    await employeeService.deposite(toId, amount, desc);
+    await employeeService.deposit(toId, amount, desc);
 
     res.status(201).json({
       message: "Amount deposited successfully",
@@ -155,14 +155,14 @@ exports.depositeMoney = async (req, res) => {
 };
 
 // Withdraws amount from an account through DB stored procedure.
-exports.withdrawlMoney = async (req, res) => {
+exports.withdrawalMoney = async (req, res) => {
   try {
     const { fromId, amount, desc } = req.body;
 
-    await employeeService.withdrawl(fromId, amount, desc);
+    await employeeService.withdrawal(fromId, amount, desc);
 
     res.status(201).json({
-      message: "Amount withdrawl successfully",
+      message: "Amount withdrawn successfully",
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
