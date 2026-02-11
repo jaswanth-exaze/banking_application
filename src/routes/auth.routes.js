@@ -12,5 +12,7 @@ router.get("/test", authController.test);
 
 // User login route.
 router.post("/login", authController.login);
+router.post("/refresh", authController.refreshToken);
+router.post("/logout", authController.logout);
 
 module.exports = router;
